@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     ContaFaltas · index.html
+     Estructura de todas las pantallas de la app.
+     El contenido que cambia (tablas, tarjetas, listas) lo rellena
+     JavaScript (js/app.js); aquí solo están los "huecos" con su id.
+     ============================================================ -->
+<html lang="es">
+
+<head>
+  <!-- Codificación para usar tildes y ñ -->
+  <meta charset="UTF-8">
+  <!-- Adapta la página al ancho del móvil -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContaFaltas · Control de faltas</title>
+  <meta name="description" content="Controla tus faltas de FP: % por asignatura y cuántas te quedan antes del 20 %.">
+
+  <!-- App instalable (PWA): nombre, logo y color de la barra del móvil.
+       Es lo que usa PWABuilder para crear el .apk de Android. -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#1F4FC4">
+  <link rel="icon" type="image/png" sizes="32x32" href="iconos/favicon-32.png">
+  <link rel="apple-touch-icon" href="iconos/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ContaFaltas">
+
+  <!-- Fuentes de Google: Inter (texto) y Space Grotesk (títulos y números).
+       Si no hay internet, se usa la fuente del sistema. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap">
+
+  <!-- Nuestra hoja de estilos -->
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+  <!-- ==========================================================
+       CABECERA: logo, pestañas (solo en ordenador) y curso
+       ========================================================== -->
+  <header class="cabecera">
+    <div class="cabecera__interior">
+      <!-- Logo: cuadrado azul con un check blanco -->
+      <div class="marca">
+        <svg class="marca__logo" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="8" fill="#1F4FC4"></rect>
+          <path d="M9 16.5l4.5 4.5L23 11.5" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span class="marca__nombre">ContaFaltas</span>
+      </div>
+
+      <!-- Pestañas de ordenador. data-seccion = sección que abren -->
+      <nav class="pestanas" aria-label="Secciones">
+        <button type="button" class="pestana" data-seccion="inicio">Inicio</button>
+        <button type="button" class="pestana" data-seccion="calendario">Calendario</button>
+        <button type="button" class="pestana" data-seccion="horario">Horario</button>
+        <button type="button" class="pestana" data-seccion="ajustes">Ajustes</button>
+      </nav>
+
+      <!-- Derecha: curso y botón Guardar -->
+      <div class="cabecera__derecha">
+        <!-- Curso: texto largo en ordenador y corto en móvil -->
+        <p class="cabecera__curso">
+          <span class="solo-escritorio" id="curso-largo"></span>
+          <span class="solo-movil" id="curso-corto"></span>
+          <!-- "Guardado a las 12:03" (lo rellena app.js) -->
+          <span class="cabecera__estado" id="estado-guardado"></span>
+        </p>
+        <!-- Botón Guardar: guarda el progreso para salir y volver cuando quieras -->
+        <!-- En el móvil solo se ve el icono (aria-label lo nombra para lectores de pantalla) -->
+        <button type="button" class="boton-guardar" id="boton-guardar" aria-label="Guardar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h11l3 3v15H5z"></path><path d="M8 3v5h8V3M8 21v-7h8v7"></path></svg>
+          <span class="solo-escritorio">Guardar</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="contenido">
+
+    <!-- ==========================================================
+         SECCIÓN INICIO: mis faltas
+         ========================================================== -->
+    <section id="inicio" class="seccion" aria-labelledby="titulo-inicio">
+
+      <!-- Título y selector de periodo -->
+      <div class="inicio-cabecera">
+        <div>
+          <p class="texto-secundario" id="hoy-texto"></p>
+          <h1 id="titulo-inicio" class="titulo-grande">Mis faltas</h1>
+        </div>
+        <!-- Los botones de periodo los crea app.js -->
+        <div class="selector-periodo" id="selector-periodo" role="group" aria-label="Periodo a mostrar"></div>
+      </div>
+
+      <!-- Mensaje cuando falta configurar algo (lo rellena app.js) -->
+      <div class="tarjeta aviso-vacio" id="aviso-vacio" hidden></div>
+
+      <!-- Todo lo de abajo solo se ve cuando hay datos -->
+      <div id="contenido-inicio">
+
+        <!-- Resumen de ordenador: 4 tarjetas -->
+        <div class="resumen-escritorio">
+          <div class="tarjeta dato">
+            <p class="dato__etiqueta">Faltas en el periodo</p>
+            <p class="dato__numero" id="res-faltas">0</p>
+            <p class="dato__pie">de <span id="res-horas">0</span> horas de clase</p>
+          </div>
+          <div class="tarjeta dato">
+            <p class="dato__etiqueta">% faltado en total</p>
+            <p class="dato__numero" id="res-pct">0,0 %</p>
+            <p class="dato__pie">sumando todas las asignaturas</p>
+          </div>
+          <div class="tarjeta dato">
+            <p class="dato__etiqueta">Asignatura más justa</p>
+            <p class="dato__nombre" id="res-justa">—</p>
+            <p class="dato__alerta" id="res-justa-margen"></p>
+          </div>
+          <div class="tarjeta dato">
+            <p class="dato__etiqueta">Límite por asignatura</p>
+            <p class="dato__numero" id="res-limite">20 %</p>
+            <p class="dato__pie">se cambia en Ajustes</p>
+          </div>
+        </div>
+
+        <!-- Resumen de móvil: tarjeta azul -->
+        <div class="resumen-movil">
+          <div>
+            <p class="resumen-movil__etiqueta">Faltas</p>
+            <p class="resumen-movil__numero" id="res-m-faltas">0</p>
+            <p class="resumen-movil__pie">de <span id="res-m-horas">0</span> horas</p>
+          </div>
+          <div>
+            <p class="resumen-movil__etiqueta">% faltado</p>
+            <p class="resumen-movil__numero" id="res-m-pct">0,0 %</p>
+            <p class="resumen-movil__pie">límite: <span id="res-m-limite">20 %</span> por asignatura</p>
+          </div>
+        </div>
+
+        <!-- Asignaturas: tabla en ordenador, tarjetas en móvil -->
+        <section class="tarjeta asignaturas" aria-labelledby="titulo-asignaturas">
+          <div class="asignaturas__cabecera">
+            <h2 id="titulo-asignaturas" class="titulo-tarjeta">Asignaturas<span class="solo-escritorio"> · <span id="nombre-periodo"></span></span></h2>
+            <button type="button" class="boton-secundario" data-ir="horario">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+              <span class="solo-escritorio">Añadir asignatura</span><span class="solo-movil">Añadir</span>
+            </button>
+          </div>
+
+          <!-- Tabla (ordenador) -->
+          <div class="tabla-contenedor solo-escritorio">
+            <table class="tabla">
+              <caption class="oculto">Faltas por asignatura en el periodo seleccionado</caption>
+              <!-- Ancho fijo de cada columna: así, al sumar o restar,
+                   las columnas no cambian de tamaño y los botones no se mueven -->
+              <colgroup>
+                <col>
+                <col class="col-semana">
+                <col class="col-horas">
+                <col class="col-faltas">
+                <col class="col-pct">
+                <col class="col-margen">
+                <col class="col-estado">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col">Asignatura</th>
+                  <th scope="col">h/semana</th>
+                  <th scope="col">Horas del periodo</th>
+                  <th scope="col">Faltas</th>
+                  <th scope="col">% faltado (barra llena = <span id="limite-tabla">20 %</span>)</th>
+                  <th scope="col">Margen</th>
+                  <th scope="col">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-cuerpo"></tbody>
+            </table>
+          </div>
+
+          <!-- Tarjetas (móvil) -->
+          <div class="lista-tarjetas solo-movil" id="lista-tarjetas"></div>
+        </section>
+
+        <p class="nota">Las horas salen de tu horario y del calendario escolar: solo cuentan los días lectivos de lunes a viernes. Cada falta es 1 hora de clase. El botón + apunta la falta en el trimestre que estés viendo; en «Curso completo» se apunta en el trimestre actual.</p>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         SECCIÓN CALENDARIO
+         ========================================================== -->
+    <section id="calendario" class="seccion" aria-labelledby="titulo-calendario" hidden>
+      <h1 id="titulo-calendario" class="titulo-grande">Calendario escolar</h1>
+
+      <!-- Fechas de los trimestres (los campos los crea app.js) -->
+      <div class="tarjeta bloque">
+        <h2 class="titulo-tarjeta">Trimestres</h2>
+        <p class="texto-secundario">Pon el primer y el último día de clase de cada trimestre.</p>
+        <div class="trimestres" id="lista-trimestres"></div>
+      </div>
+
+      <!-- Días no lectivos -->
+      <div class="tarjeta bloque">
+        <h2 class="titulo-tarjeta">Días no lectivos</h2>
+        <p class="texto-secundario">Festivos, puentes y vacaciones. Para un solo día, deja «Hasta» vacío.</p>
+        <form class="formulario-fila" id="form-no-lectivo">
+          <label class="campo">
+            <span>Desde</span>
+            <input type="date" id="nl-desde" required>
+          </label>
+          <label class="campo">
+            <span>Hasta (opcional)</span>
+            <input type="date" id="nl-hasta">
+          </label>
+          <label class="campo campo--ancho">
+            <span>Motivo (opcional)</span>
+            <input type="text" id="nl-motivo" placeholder="Por ejemplo, Navidad" maxlength="40">
+          </label>
+          <button type="submit" class="boton-principal">Añadir</button>
+        </form>
+        <ul class="lista-simple" id="lista-no-lectivos"></ul>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         SECCIÓN HORARIO
+         ========================================================== -->
+    <section id="horario" class="seccion" aria-labelledby="titulo-horario" hidden>
+      <h1 id="titulo-horario" class="titulo-grande">Horario semanal</h1>
+
+      <!-- Añadir asignatura -->
+      <div class="tarjeta bloque">
+        <h2 class="titulo-tarjeta">Añadir asignatura</h2>
+        <form class="formulario-fila" id="form-asignatura">
+          <label class="campo campo--ancho">
+            <span>Nombre de la asignatura</span>
+            <input type="text" id="nueva-asignatura" placeholder="Por ejemplo, Servicios en Red" maxlength="60" required>
+          </label>
+          <button type="submit" class="boton-principal">Añadir</button>
+        </form>
+      </div>
+
+      <!-- Rejilla del horario (la crea app.js) -->
+      <div class="tarjeta bloque">
+        <h2 class="titulo-tarjeta">Horas de cada asignatura por día</h2>
+        <p class="texto-secundario">Escribe cuántas horas tienes de cada asignatura cada día (de 0 a 8). Puedes cambiar el nombre tocándolo.</p>
+        <div class="tabla-contenedor">
+          <table class="tabla tabla-horario">
+            <caption class="oculto">Horas de cada asignatura de lunes a viernes</caption>
+            <thead>
+              <tr>
+                <th scope="col">Asignatura</th>
+                <th scope="col">L</th>
+                <th scope="col">M</th>
+                <th scope="col">X</th>
+                <th scope="col">J</th>
+                <th scope="col">V</th>
+                <th scope="col">h/semana</th>
+                <th scope="col"><span class="oculto">Borrar</span></th>
+              </tr>
+            </thead>
+            <tbody id="horario-cuerpo"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         SECCIÓN AJUSTES
+         ========================================================== -->
+    <section id="ajustes" class="seccion" aria-labelledby="titulo-ajustes" hidden>
+      <h1 id="titulo-ajustes" class="titulo-grande">Ajustes</h1>
+
+      <div class="tarjeta bloque">
+        <h2 class="titulo-tarjeta">Mi curso</h2>
+        <label class="campo">
+          <span>Nombre del curso</span>
+          <input type="text" id="ajuste-curso" placeholder="Curso 2026-27" maxlength="40">
+        </label>
+
+        <fieldset class="campo">
+          <legend>Número de trimestres</legend>
+          <div class="opciones">
+            <label class="opcion"><input type="radio" name="num-trimestres" value="2"> 2 trimestres</label>
+            <label class="opcion"><input type="radio" name="num-trimestres" value="3"> 3 trimestres</label>
+          </div>
+        </fieldset>
+
+        <label class="campo">
+          <span>Límite de faltas por asignatura (%)</span>
+          <input type="number" id="ajuste-limite" min="1" max="50" step="1">
+        </label>
+      </div>
+
+      <div class="tarjeta bloque">
+        <h2 class="titulo-tarjeta">Mis datos</h2>
+        <p class="texto-secundario">Tus datos se guardan solo en este navegador. Nadie más los ve. Cada cambio se guarda solo, y con el botón «Guardar» de arriba te aseguras antes de cerrar.</p>
+
+        <!-- Copia de seguridad en un archivo .json -->
+        <h3 class="subtitulo">Copia de seguridad</h3>
+        <p class="texto-secundario">Descarga una copia de vez en cuando. Si borras el navegador o cambias de ordenador, cárgala y recuperarás todas tus faltas.</p>
+        <div class="botones">
+          <button type="button" class="boton-principal" id="boton-exportar">Descargar copia</button>
+          <button type="button" class="boton-secundario" id="boton-importar">Cargar copia</button>
+          <!-- Selector de archivo oculto: lo abre el botón "Cargar copia" -->
+          <input type="file" id="archivo-copia" accept=".json,application/json" hidden>
+        </div>
+
+        <h3 class="subtitulo">Volver a empezar</h3>
+        <div class="botones">
+          <button type="button" class="boton-secundario" id="boton-predeterminados">Restaurar calendario y horario del curso</button>
+          <button type="button" class="boton-peligro" id="boton-borrar">Borrar todos los datos</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================
+       BARRA DE PESTAÑAS INFERIOR (solo móvil)
+       ========================================================== -->
+  <nav class="barra-inferior" aria-label="Secciones">
+    <button type="button" class="barra-inferior__boton" data-seccion="inicio">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg>
+      Inicio
+    </button>
+    <button type="button" class="barra-inferior__boton" data-seccion="calendario">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+      Calendario
+    </button>
+    <button type="button" class="barra-inferior__boton" data-seccion="horario">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M3 15h18M9 3v18M15 3v18"></path></svg>
+      Horario
+    </button>
+    <button type="button" class="barra-inferior__boton" data-seccion="ajustes">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+      Ajustes
+    </button>
+  </nav>
+
+  <!-- Mensajes cortos (por ejemplo, "Datos guardados") -->
+  <div class="aviso-flotante" id="aviso-flotante" role="status" aria-live="polite" hidden></div>
+
+  <!-- Scripts: primero los datos, luego los cálculos y por último la app -->
+  <script src="js/datos.js" defer></script>
+  <script src="js/calculos.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+
+</html>

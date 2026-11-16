@@ -1,0 +1,59 @@
+CONTAFALTAS · Control personal de faltas para FP
+================================================
+
+Esta app calcula cuántas faltas llevas en cada asignatura, qué % es y
+cuántas te quedan antes de llegar al 20 %, por trimestre y por curso.
+Tus datos se guardan solo en tu navegador: nadie más los ve.
+
+
+CÓMO ABRIRLA (ordenador)
+------------------------
+1. Descomprime la carpeta: clic derecho en el .zip > "Extraer todo".
+   (No la abras desde dentro del .zip: descomprímela primero.)
+2. Entra en la carpeta "contafaltas" y haz doble clic en "index.html".
+   Se abrirá en tu navegador (mejor Google Chrome).
+3. Abre siempre la app desde la misma carpeta y el mismo navegador:
+   tus faltas se guardan en ese navegador.
+
+
+EN EL MÓVIL (ANDROID)
+---------------------
+Mira el archivo CREAR_APK.txt: explica cómo publicarla y convertirla en
+un .apk con su nombre y su logo. Si alguien de clase ya tiene el .apk,
+solo tienes que instalarlo.
+
+
+YA VIENE PREPARADA PARA 2.º DE SMR (curso 2026-27)
+--------------------------------------------------
+La primera vez que la abres ya trae:
+- El calendario escolar: del 4-9-2026 al 4-6-2027, con festivos y
+  vacaciones (165 días lectivos), dividido en 3 trimestres.
+- El horario con las 8 asignaturas y sus horas de cada día.
+Si algo no coincide con lo tuyo, cámbialo en "Calendario" u "Horario".
+
+
+CÓMO SE USA
+-----------
+- Inicio: cuando faltes a una hora de clase, pulsa "+" en esa
+  asignatura. Si te equivocas, pulsa "−".
+- Guardar (botón azul de arriba): la app guarda sola cada cambio, pero
+  pulsa "Guardar" antes de cerrar para asegurarte. Al volver a abrirla
+  estará todo como lo dejaste.
+- Ajustes > "Descargar copia": guarda un archivo con tus faltas.
+  Hazlo de vez en cuando. Si borras el navegador o cambias de
+  ordenador, usa "Cargar copia" y lo recuperas todo.
+
+
+COLORES
+-------
+Verde (Bien): menos del 10 % de faltas.
+Naranja (Cuidado): entre el 10 % y el 15 %.
+Rojo (Peligro): más del 15 % o ya has llegado al límite.
+El límite (20 %) se puede cambiar en Ajustes.
+
+
+IMPORTANTE
+----------
+- Cada falta cuenta como 1 hora de clase.
+- Es una ayuda para calcular: lo que cuenta de verdad son las faltas
+  que tiene apuntadas el centro.
